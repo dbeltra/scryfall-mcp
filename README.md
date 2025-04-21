@@ -58,3 +58,21 @@ Claude Desktop can run the MCP server to interact with the Scryfall API and use 
     }
 }
 ```
+
+## Testing
+
+This project uses [pytest](https://pytest.org) for unit testing. Tests are located in the `tests/` directory.
+
+### Running Tests
+To run the full test suite:
+
+```bash
+pytest
+```
+
+To run a specific test:
+
+```bash
+pytest tests/test_scryfall.py::test_get_cards_no_query
+```
+
