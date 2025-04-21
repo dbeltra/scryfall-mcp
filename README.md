@@ -34,8 +34,7 @@ uv pip install -r pyproject.toml
 
 ### Running the project
 
-Running the project with `uv run scryfall.py` should display "mcp server started" in the console, however this is intended to be ran by an MCP host, like Claude Desktop.
-
+Running the project with `uv run scryfall.py "Atraxa"` should display the scryfall results for the Atraxa card in the console, however this is intended to be ran by an MCP host, like Claude Desktop.
 
 ### Integration with Claude Desktop
 

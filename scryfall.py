@@ -1,4 +1,6 @@
 import requests
+import sys
+
 from mcp.server.fastmcp import FastMCP
 
 # Initialize FastMCP server
@@ -94,6 +96,8 @@ def get_cards(card_name=None, card_color=None, card_type=None, card_text=None):
 
 
 if __name__ == "__main__":
-    print("mcp server started")
-    # Initialize and run the server
-    mcp.run(transport='stdio')
+    if len(sys.argv) > 1:
+        print(get_cards(card_name=sys.argv[1]))
+    else:
+        print("mcp server started")
+        mcp.run(transport='stdio')
