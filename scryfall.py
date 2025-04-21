@@ -18,28 +18,31 @@ def make_request(url):
         url: URL for the request
     """
     headers = {"User-Agent": USER_AGENT}
-    response = requests.get(url, headers=headers)
-    if response.status_code != 200:
-        return f"Error: {response.status_code} - {response.text}"
-    return format_scryfall_response(response)
+    cards = []
+
+    while url:
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            return f"Error: {response.status_code} - {response.text}"
+
+        result = response.json()
+
+        cards.extend(result.get("data", []))
+        url = result.get("next_page") if result.get("has_more") else None
+
+    return format_scryfall_cards(cards)
 
 
-def format_scryfall_response(response):
-    """Format a scryfall response into a GPT readable string
+def format_scryfall_cards(cards):
+    """Format a scryfall card list into a GPT readable string
 
     Args:
-        response: request response
+        cards: card list
     """
-    result = response.json()
 
-    if result.get("object") == "error":
-        return f"Error: {result.get('details')}"
-
-    if "data" not in result:
-        return "No data found in response"
-
-    cards = []
-    for card in result["data"]:
+    formatted = []
+    for card in cards:
+        prices = card.get("prices") or {}
 
         card_info = f"""
 {card['name']}:
@@ -52,14 +55,14 @@ Power: {card.get('power', 'N/A')}
 Thoughness: {card.get('toughness', 'N/A')}
 Rarity: {card.get('rarity', 'N/A')}
 From the set: {card.get('set_name', 'N/A')}
-Price USD: {card.get("prices").get("usd")}
-Price EUR: {card.get("prices").get("eur")}
-Foil version Price USD: {card.get("prices").get("usd_foil")}
-Foil version Price EUR: {card.get("prices").get("eur_foil")}
+Price USD: {prices.get("usd", 'N/A')}
+Price EUR: {prices.get("eur", 'N/A')}
+Foil version Price USD: {prices.get("usd_foil", 'N/A')}
+Foil version Price EUR: {prices.get("eur_foil", 'N/A')}
 """
-        cards.append(card_info)
+        formatted.append(card_info)
 
-    return "\n---\n".join(cards)
+    return "\n---\n".join(formatted)
 
 
 @mcp.tool()
