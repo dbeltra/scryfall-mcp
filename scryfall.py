@@ -1,5 +1,7 @@
-import requests
+import asyncio
 import sys
+import httpx
+from urllib.parse import quote
 
 from mcp.server.fastmcp import FastMCP
 
@@ -11,7 +13,7 @@ API_BASE = "https://api.scryfall.com"
 USER_AGENT = "MTG-mcp-app/1.0"
 
 
-def make_request(url):
+async def make_request(url):
     """Make a GET request
 
     Args:
@@ -20,15 +22,16 @@ def make_request(url):
     headers = {"User-Agent": USER_AGENT}
     cards = []
 
-    while url:
-        response = requests.get(url, headers=headers)
-        if response.status_code != 200:
-            return f"Error: {response.status_code} - {response.text}"
+    async with httpx.AsyncClient(headers=headers) as client:
+        while url:
+            response = await client.get(url)
+            if response.status_code != 200:
+                return f"Error: {response.status_code} - {response.text}"
 
-        result = response.json()
+            result = response.json()
 
-        cards.extend(result.get("data", []))
-        url = result.get("next_page") if result.get("has_more") else None
+            cards.extend(result.get("data", []))
+            url = result.get("next_page") if result.get("has_more") else None
 
     return format_scryfall_cards(cards)
 
@@ -92,10 +95,10 @@ def get_cards(card_name=None, card_color=None, card_type=None, card_text=None):
 
     query_string = " AND ".join(query_parts)
 
-    encoded_query = requests.utils.quote(query_string)
+    encoded_query = quote(query_string)
     full_url = f"{url}?q={encoded_query}"
 
-    return make_request(full_url)
+    return asyncio.run(make_request(full_url))
 
 
 if __name__ == "__main__":
