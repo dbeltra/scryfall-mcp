@@ -29,4 +29,4 @@ jobs:
         uv venv
         source .venv/bin/activate
         uv pip install -e ".[dev]"
-        pytest
+        pytest --cov=mcp_server --cov-report=term --cov-report=xml
