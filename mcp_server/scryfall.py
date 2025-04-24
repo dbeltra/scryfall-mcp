@@ -82,13 +82,13 @@ def get_cards(card_name=None, card_color=None, card_type=None, card_text=None):
     query_parts = []
 
     if card_name:
-        query_parts.append(f"name:\"{card_name}\"")
+        query_parts.append(f'name:"{card_name}"')
     if card_color:
         query_parts.append(f"c:{card_color}")
     if card_type:
         query_parts.append(f"t:{card_type}")
     if card_text:
-        query_parts.append(f"o:\"{card_text}\"")
+        query_parts.append(f'o:"{card_text}"')
 
     if not query_parts:
         return "Error: No search parameters provided"
@@ -101,9 +101,14 @@ def get_cards(card_name=None, card_color=None, card_type=None, card_text=None):
     return asyncio.run(make_request(full_url))
 
 
-if __name__ == "__main__":
+def main():
+    """Main execution method. Chooses from CLI output or mcp running modes."""
     if len(sys.argv) > 1:
         print(get_cards(card_name=sys.argv[1]))
     else:
         print("mcp server started")
-        mcp.run(transport='stdio')
+        mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    main()
