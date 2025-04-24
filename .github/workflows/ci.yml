@@ -14,22 +14,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
+    - name: "Set up Python"
       uses: actions/setup-python@v5
       with:
-        python-version: '3.12'
+        python-version-file: ".python-version"
 
-    - name: Install uv
-      run: |
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+    - name: Install project
+      run: uv sync --locked --all-extras --dev
 
-    - name: Set up virtualenv, install deps, and run tests
-      run: |
-        uv venv
-        source .venv/bin/activate
-        uv pip install -e ".[dev]"
-        pytest --cov=mcp_server --cov-report=term --cov-report=xml
+    - name: Run tests
+      run: uv run pytest --cov=mcp_server --cov-report=term --cov-report=xml
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
