@@ -1,3 +1,7 @@
+![Tests](https://github.com/dbeltra/scryfall-mcp/actions/workflows/ci.yml/badge.svg)
+[![codecov](https://codecov.io/gh/dbeltra/scryfall-mcp/branch/main/graph/badge.svg)](https://codecov.io/gh/dbeltra/scryfall-mcp)
+
+
 # MCP Server – Scryfall API Interface
 
 This is an [MCP](https://modelcontextprotocol.io/) server that interfaces with the [Scryfall API](https://scryfall.com/docs/api) to fetch and display detailed Magic: The Gathering card data. It supports searching cards by name, color, type, and text content.
